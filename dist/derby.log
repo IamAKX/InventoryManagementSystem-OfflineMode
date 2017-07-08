@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Sat Jul 08 23:38:41 IST 2017:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance a816c00e-015d-2363-ac0b-00000233a198 
+on database directory /home/akash/Documents/NetBeansProject/InventoryManagementSystem/dist/IMS with class loader sun.misc.Launcher$AppClassLoader@70dea4e 
+Loaded from file:/home/akash/Documents/NetBeansProject/InventoryManagementSystem/dist/lib/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_121-b13
+user.dir=/home/akash/Documents/NetBeansProject/InventoryManagementSystem/dist
+os.name=Linux
+os.arch=amd64
+os.version=4.4.0-81-generic
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

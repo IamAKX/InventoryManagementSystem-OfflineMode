@@ -21,17 +21,20 @@ import org.apache.derby.drda.NetworkServerControl;
  */
 public class ResetDataToDefault {
     
-    public void execute()
-    {
-        String url = "jdbc:derby://localhost:1527/IMS;create=true";
+        //String url = "jdbc:derby://localhost:1527/IMS;create=true";
+        String url = "jdbc:derby:IMS;create=true";
         Connection con = null;
         Statement stmt = null;
         NetworkServerControl server = null;
         
+    public void execute()
+    {
+       
         try{
-            server = new NetworkServerControl(InetAddress.getByName("localhost"), 1527);
-            server.start(null);
-            Class.forName("org.apache.derby.jdbc.ClientDriver");
+            //server = new NetworkServerControl(InetAddress.getByName("localhost"), 1527);
+            //server.start(null);
+            //Class.forName("org.apache.derby.jdbc.ClientDriver");
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             con = DriverManager.getConnection(url);
             stmt = con.createStatement();
             
@@ -1151,10 +1154,8 @@ public class ResetDataToDefault {
             }
             System.out.println("size = "+size);
             
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(ResetDataToDefault.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
-            Logger.getLogger(ResetDataToDefault.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println(ex.getMessage());
         }
         
     }
