@@ -4,8 +4,9 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/akash/Documents/NetBeansProject/InventoryManagementSystem/src/AkashApplications/src/MainUI.java</file>
-            <file>file:/home/akash/Documents/NetBeansProject/InventoryManagementSystem/src/AkashApplications/src/ConvertMoneyToNumberMain.java</file>
-            <file>file:/home/akash/Documents/NetBeansProject/InventoryManagementSystem/src/AkashApplications/src/DownloadBarcode.java</file>
+            <file>file:/home/akash/Documents/NetBeansProject/InventoryManagementSystem/src/AkashApplications/DB/StockResultSet.java</file>
+            <file>file:/home/akash/Documents/NetBeansProject/InventoryManagementSystem/src/AkashApplications/networkmanager/ServerConstants.java</file>
+            <file>file:/home/akash/Documents/NetBeansProject/InventoryManagementSystem/src/AkashApplications/DB/UpdateStock.java</file>
             <file>file:/home/akash/Documents/NetBeansProject/InventoryManagementSystem/src/AkashApplications/DB/ResetDataToDefault.java</file>
         </group>
     </open-files>

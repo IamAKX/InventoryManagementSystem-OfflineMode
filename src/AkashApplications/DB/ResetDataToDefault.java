@@ -39,6 +39,15 @@ public class ResetDataToDefault {
             stmt = con.createStatement();
             
             try{
+                stmt.execute("DROP TABLE STOCK");
+                stmt.execute("DROP TABLE CLIENT");
+            }
+            catch(Exception e)
+            {
+                System.err.println(e);
+            }
+            
+            try{
                 System.out.println("create client");
                 stmt.execute("CREATE TABLE CLIENT (ID int not null primary key GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), NAME varchar(500) NOT NULL,COMPANY varchar(500) NOT NULL,PHONE varchar(15) NOT NULL,ADDRESS varchar(800) NOT NULL,FAVOURITE varchar(10) NOT NULL)");
             }
@@ -56,7 +65,7 @@ public class ResetDataToDefault {
             
             try{
                 System.out.println("create stock");
-                stmt.execute("CREATE TABLE STOCK (ID int not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),PID varchar(300) NOT NULL primary key,DESIGN varchar(30000) NOT NULL,RACK varchar(500) NOT NULL,SUBRACK varchar(500) NOT NULL,TEXTURE varchar(30000) NOT NULL,QUANTITY int NOT NULL,BARCODE varchar(30000) NOT NULL)");
+                stmt.execute("CREATE TABLE STOCK (ID int not null GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1),PID varchar(300) NOT NULL primary key,DESIGN varchar(30000) NOT NULL,RACK varchar(500) NOT NULL,SUBRACK varchar(500) NOT NULL,TEXTURE varchar(30000) NOT NULL,QUANTITY int NOT NULL,BARCODE varchar(30000) NOT NULL)");
             }
             catch(Exception e)
             {
