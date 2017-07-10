@@ -57,7 +57,7 @@ public class ResetDataToDefault {
             }
             finally
             {
-                System.err.println("Delete stock : "+stmt.executeUpdate("DELETE FROM CLIENT"));
+                System.err.println("Delete client : "+stmt.executeUpdate("DELETE FROM CLIENT"));
                 String query = String.format("INSERT INTO CLIENT (NAME, COMPANY, PHONE, ADDRESS, FAVOURITE) VALUES ('Akash Giri', 'Akash Application Pvt. Ltd.', '9804945122', '123, Sillicon Valley,California, CA 10523.', 'Yes')");
                 stmt.executeUpdate(query);
             }
@@ -65,7 +65,7 @@ public class ResetDataToDefault {
             
             try{
                 System.out.println("create stock");
-                stmt.execute("CREATE TABLE STOCK (ID int not null GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1),PID varchar(300) NOT NULL primary key,DESIGN varchar(30000) NOT NULL,RACK varchar(500) NOT NULL,SUBRACK varchar(500) NOT NULL,TEXTURE varchar(30000) NOT NULL,QUANTITY int NOT NULL,BARCODE varchar(30000) NOT NULL)");
+                stmt.execute("CREATE TABLE STOCK (ID int not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),PID varchar(300) NOT NULL primary key,DESIGN varchar(30000) NOT NULL,RACK varchar(500) NOT NULL,SUBRACK varchar(500) NOT NULL,TEXTURE varchar(30000) NOT NULL,QUANTITY int NOT NULL,BARCODE varchar(30000) NOT NULL)");
             }
             catch(Exception e)
             {
@@ -1161,7 +1161,15 @@ public class ResetDataToDefault {
             {
                 size++;
             }
-            System.out.println("size = "+size);
+            System.out.println("size of stock = "+size);
+            
+            rs = stmt.executeQuery("select * from CLIENT");
+            size = 0;
+            while (rs.next()) 
+            {
+                size++;
+            }
+            System.out.println("size of client = "+size);
             
         } catch (Exception ex) {
             System.err.println(ex.getMessage());

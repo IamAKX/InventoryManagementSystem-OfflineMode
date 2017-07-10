@@ -19,10 +19,9 @@ public class StockResultSet {
         static String url = "jdbc:derby:IMS;create=true";
         static Connection con = null;
         static Statement stmt = null;
-        
+        static ResultSet rs = null;
         public static ResultSet fetchStock(String query)
         {
-            ResultSet rs = null;
             
             try{
                 Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -30,6 +29,12 @@ public class StockResultSet {
                 stmt = con.createStatement();
                 rs = stmt.executeQuery(query);
                 
+//                int size = 0;
+//                while (rs.next()) 
+//                {
+//                    size++;
+//                }
+//                System.out.println("size of client = "+size);
                 
             } catch (ClassNotFoundException ex) {
                 System.err.println(ex);

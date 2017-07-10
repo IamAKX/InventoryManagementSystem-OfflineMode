@@ -1,3 +1,0 @@
-AkashApplications.src.ConvertMoneyToNumberMain
-AkashApplications.src.NumToWords
-AkashApplications.src.ConvertAmtInRupees

@@ -6,6 +6,7 @@
 package AkashApplications.src;
 
 
+import AkashApplications.DB.DbUtils;
 import AkashApplications.DB.ResetDataToDefault;
 import AkashApplications.DB.StockResultSet;
 import AkashApplications.DB.UpdateStock;
@@ -45,7 +46,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
-import net.proteanit.sql.DbUtils;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 
@@ -65,7 +66,6 @@ public class MainUI extends javax.swing.JFrame {
         setPanelVisibility(StockPane);
         setProgressBarVisibility();
         
-        System.err.println(new ServerConstants(radioRuby.isSelected()).DELETE_STOCK);
         
         BulkItemTable.getColumnModel().getColumn(6).setMaxWidth(0);
         BulkItemTable.getColumnModel().getColumn(6).setMinWidth(0);
@@ -96,9 +96,9 @@ public class MainUI extends javax.swing.JFrame {
             public void actionPerformed(ActionEvent e) {
                 DefaultTableModel dtm = (DefaultTableModel)ClientTable.getModel();
                 int row = ClientTable.getSelectedRow();
-                String content = ""+(String) dtm.getValueAt(row, 0)+"\n"+
-                        (String) dtm.getValueAt(row, 1)+"\n"+
-                        (String) dtm.getValueAt(row, 3);
+                String content = ""+(String) dtm.getValueAt(row, 1)+"\n"+
+                        (String) dtm.getValueAt(row, 2)+"\n"+
+                        (String) dtm.getValueAt(row, 4);
                 StringSelection selection = new StringSelection(content);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selection, selection);
@@ -114,9 +114,9 @@ public class MainUI extends javax.swing.JFrame {
             public void actionPerformed(ActionEvent e) {
                 DefaultTableModel dtm = (DefaultTableModel)FavouriteClientTable.getModel();
                 int row = FavouriteClientTable.getSelectedRow();
-                String content = ""+(String) dtm.getValueAt(row, 0)+"\n"+
-                        (String) dtm.getValueAt(row, 1)+"\n"+
-                        (String) dtm.getValueAt(row, 3);
+                String content = ""+(String) dtm.getValueAt(row, 1)+"\n"+
+                        (String) dtm.getValueAt(row, 2)+"\n"+
+                        (String) dtm.getValueAt(row, 4);
                 StringSelection selection = new StringSelection(content);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selection, selection);
@@ -135,15 +135,18 @@ public class MainUI extends javax.swing.JFrame {
                 DefaultTableModel dtm = (DefaultTableModel)StockSummaryTable.getModel();
                 int row = StockSummaryTable.getSelectedRow();
                 String pid = (String) dtm.getValueAt(row, 1);
-                HashMap<String,String> hashMap = new HashMap<>();
-                hashMap.put("id",pid);
-                String reply = new SendBulkRequest(hashMap, new ServerConstants(radioRuby.isSelected()).DELETE_STOCK).serverResponse();
-                System.err.println(pid+"\n"+reply);
-                CustomJsonParser cjp = new CustomJsonParser(reply);
-                if(cjp.getStatus())
+                System.out.println(pid+"fddddd");
+                String query = "DELETE FROM STOCK WHERE PID='"+pid+"'";
+                int res = UpdateStock.update(query);
+//                HashMap<String,String> hashMap = new HashMap<>();
+//                hashMap.put("id",pid);
+//                String reply = new SendBulkRequest(hashMap, new ServerConstants(radioRuby.isSelected()).DELETE_STOCK).serverResponse();
+//                System.err.println(pid+"\n"+reply);
+//                CustomJsonParser cjp = new CustomJsonParser(reply);
+                if(res!=-999)
                     new ViewAllSummaryProgress().execute();
                 else
-                    JOptionPane.showMessageDialog(null, cjp.getReason(),"Error",JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Failed to delete stock");
             }
         });
         popupMenudelete.add(deleteItem);
@@ -160,13 +163,7 @@ public class MainUI extends javax.swing.JFrame {
     
     public String buildTitle()
     {
-        String place = "";
-        if(radioRuby.isSelected())
-            place = radioRuby.getText();
-        else
-            if(radioBehala.isSelected())
-                place = radioBehala.getText();
-        String TITLE = "Inventory Management ("+place+") ";
+        String TITLE = "Inventory Management (OFFLINE MODE) ";
         return TITLE;
     }
     
@@ -231,6 +228,24 @@ public class MainUI extends javax.swing.JFrame {
         saveAllBtnAddBulk = new javax.swing.JButton();
         textureAddBulk = new javax.swing.JTextField();
         jLabel18 = new javax.swing.JLabel();
+        StockPane = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        productID = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        rackNo = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        subRackNo = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        qty = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        designName = new javax.swing.JTextField();
+        deleteStockBtn = new javax.swing.JButton();
+        editUpdateBtn = new javax.swing.JButton();
+        mainUiProgress = new javax.swing.JProgressBar();
+        mainUiProgressReport = new javax.swing.JLabel();
+        searchBtn = new javax.swing.JButton();
+        jLabel20 = new javax.swing.JLabel();
+        texture = new javax.swing.JTextField();
         AddClient = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
         ClientName = new javax.swing.JTextField();
@@ -269,24 +284,6 @@ public class MainUI extends javax.swing.JFrame {
         paymentType = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        StockPane = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        productID = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        rackNo = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        subRackNo = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        qty = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        designName = new javax.swing.JTextField();
-        updateCancleBtn = new javax.swing.JButton();
-        editUpdateBtn = new javax.swing.JButton();
-        mainUiProgress = new javax.swing.JProgressBar();
-        mainUiProgressReport = new javax.swing.JLabel();
-        searchBtn = new javax.swing.JButton();
-        jLabel20 = new javax.swing.JLabel();
-        texture = new javax.swing.JTextField();
         FavouriteClientPanel = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         FavouriteClientTable = new javax.swing.JTable();
@@ -297,7 +294,6 @@ public class MainUI extends javax.swing.JFrame {
         FavSearchBtn = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItem7 = new javax.swing.JMenuItem();
@@ -307,10 +303,6 @@ public class MainUI extends javax.swing.JFrame {
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JPopupMenu.Separator();
-        jMenu4 = new javax.swing.JMenu();
-        radioRuby = new javax.swing.JRadioButtonMenuItem();
-        radioBehala = new javax.swing.JRadioButtonMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem9 = new javax.swing.JMenuItem();
         jMenuItem10 = new javax.swing.JMenuItem();
@@ -318,7 +310,7 @@ public class MainUI extends javax.swing.JFrame {
         jMenuItem4 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Inventory Management");
+        setTitle("OFFLINE MODE Inventory Management");
         setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -824,6 +816,196 @@ public class MainUI extends javax.swing.JFrame {
 
         getContentPane().add(AddBulkItemPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
+        jLabel2.setText("Product ID");
+
+        productID.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                productIDInputMethodTextChanged(evt);
+            }
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+        });
+        productID.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                productIDKeyTyped(evt);
+            }
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                productIDKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                productIDKeyReleased(evt);
+            }
+        });
+
+        jLabel3.setText("Rack Number");
+        jLabel3.setPreferredSize(new java.awt.Dimension(73, 15));
+
+        rackNo.setEnabled(false);
+        rackNo.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                rackNoInputMethodTextChanged(evt);
+            }
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+        });
+        rackNo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rackNoActionPerformed(evt);
+            }
+        });
+        rackNo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                rackNoKeyTyped(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                rackNoKeyReleased(evt);
+            }
+        });
+
+        jLabel1.setText("Sub Rack Number");
+
+        subRackNo.setEnabled(false);
+
+        jLabel4.setText("Stock Quantity");
+
+        qty.setEnabled(false);
+
+        jLabel5.setText("Design Name");
+
+        designName.setEnabled(false);
+
+        deleteStockBtn.setText("Delete");
+        deleteStockBtn.setEnabled(false);
+        deleteStockBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteStockBtnActionPerformed(evt);
+            }
+        });
+
+        editUpdateBtn.setText("Edit");
+        editUpdateBtn.setEnabled(false);
+        editUpdateBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editUpdateBtnActionPerformed(evt);
+            }
+        });
+
+        mainUiProgress.setIndeterminate(true);
+
+        mainUiProgressReport.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        mainUiProgressReport.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+
+        searchBtn.setText("Search");
+        searchBtn.setEnabled(false);
+        searchBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchBtnActionPerformed(evt);
+            }
+        });
+
+        jLabel20.setText("Texture");
+        jLabel20.setPreferredSize(new java.awt.Dimension(73, 15));
+
+        texture.setEnabled(false);
+        texture.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textureActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout StockPaneLayout = new javax.swing.GroupLayout(StockPane);
+        StockPane.setLayout(StockPaneLayout);
+        StockPaneLayout.setHorizontalGroup(
+            StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(StockPaneLayout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(StockPaneLayout.createSequentialGroup()
+                        .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(texture, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(StockPaneLayout.createSequentialGroup()
+                        .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(6, 6, 6)
+                        .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(StockPaneLayout.createSequentialGroup()
+                                .addComponent(rackNo, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(subRackNo, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(qty, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(StockPaneLayout.createSequentialGroup()
+                                .addComponent(productID, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(designName)))
+                        .addGap(41, 41, 41))))
+            .addGroup(StockPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, StockPaneLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(searchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(editUpdateBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(27, 27, 27)
+                        .addComponent(deleteStockBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(mainUiProgress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(mainUiProgressReport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        StockPaneLayout.setVerticalGroup(
+            StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(StockPaneLayout.createSequentialGroup()
+                .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(StockPaneLayout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(StockPaneLayout.createSequentialGroup()
+                        .addGap(23, 23, 23)
+                        .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(productID, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, StockPaneLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(designName, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(rackNo, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
+                    .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(subRackNo)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(qty, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(18, 18, 18)
+                .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(texture, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(116, 116, 116)
+                .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(deleteStockBtn)
+                    .addComponent(editUpdateBtn)
+                    .addComponent(searchBtn))
+                .addGap(30, 30, 30)
+                .addComponent(mainUiProgress, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(mainUiProgressReport, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        getContentPane().add(StockPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 540));
+
         AddClient.setPreferredSize(new java.awt.Dimension(810, 540));
 
         jLabel21.setText("Name");
@@ -1235,191 +1417,6 @@ public class MainUI extends javax.swing.JFrame {
 
         getContentPane().add(PrintChalanPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
-        jLabel2.setText("Product ID");
-
-        productID.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-                productIDInputMethodTextChanged(evt);
-            }
-            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
-            }
-        });
-        productID.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                productIDKeyTyped(evt);
-            }
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                productIDKeyPressed(evt);
-            }
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                productIDKeyReleased(evt);
-            }
-        });
-
-        jLabel3.setText("Rack Number");
-        jLabel3.setPreferredSize(new java.awt.Dimension(73, 15));
-
-        rackNo.setEnabled(false);
-        rackNo.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-                rackNoInputMethodTextChanged(evt);
-            }
-            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
-            }
-        });
-        rackNo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rackNoActionPerformed(evt);
-            }
-        });
-        rackNo.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                rackNoKeyTyped(evt);
-            }
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                rackNoKeyReleased(evt);
-            }
-        });
-
-        jLabel1.setText("Sub Rack Number");
-
-        subRackNo.setEnabled(false);
-
-        jLabel4.setText("Stock Quantity");
-
-        qty.setEnabled(false);
-
-        jLabel5.setText("Design Name");
-
-        designName.setEnabled(false);
-
-        updateCancleBtn.setText("Cancel");
-        updateCancleBtn.setEnabled(false);
-
-        editUpdateBtn.setText("Edit");
-        editUpdateBtn.setEnabled(false);
-        editUpdateBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editUpdateBtnActionPerformed(evt);
-            }
-        });
-
-        mainUiProgress.setIndeterminate(true);
-
-        mainUiProgressReport.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-        mainUiProgressReport.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-
-        searchBtn.setText("Search");
-        searchBtn.setEnabled(false);
-        searchBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchBtnActionPerformed(evt);
-            }
-        });
-
-        jLabel20.setText("Texture");
-        jLabel20.setPreferredSize(new java.awt.Dimension(73, 15));
-
-        texture.setEnabled(false);
-        texture.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textureActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout StockPaneLayout = new javax.swing.GroupLayout(StockPane);
-        StockPane.setLayout(StockPaneLayout);
-        StockPaneLayout.setHorizontalGroup(
-            StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(StockPaneLayout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(StockPaneLayout.createSequentialGroup()
-                        .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6)
-                        .addComponent(texture, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(StockPaneLayout.createSequentialGroup()
-                        .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(6, 6, 6)
-                        .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(StockPaneLayout.createSequentialGroup()
-                                .addComponent(rackNo, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(subRackNo, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(qty, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(StockPaneLayout.createSequentialGroup()
-                                .addComponent(productID, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(designName)))
-                        .addGap(41, 41, 41))))
-            .addGroup(StockPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, StockPaneLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(searchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(29, 29, 29)
-                        .addComponent(editUpdateBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
-                        .addComponent(updateCancleBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(mainUiProgress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(mainUiProgressReport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        StockPaneLayout.setVerticalGroup(
-            StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(StockPaneLayout.createSequentialGroup()
-                .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(StockPaneLayout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(StockPaneLayout.createSequentialGroup()
-                        .addGap(23, 23, 23)
-                        .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(productID, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, StockPaneLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(designName, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(rackNo, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
-                    .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(subRackNo)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(qty, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(18, 18, 18)
-                .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(texture, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(116, 116, 116)
-                .addGroup(StockPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(updateCancleBtn)
-                    .addComponent(editUpdateBtn)
-                    .addComponent(searchBtn))
-                .addGap(30, 30, 30)
-                .addComponent(mainUiProgress, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(mainUiProgressReport, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
-        getContentPane().add(StockPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 540));
-
         FavouriteClientPanel.setPreferredSize(new java.awt.Dimension(810, 540));
 
         FavouriteClientTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -1545,15 +1542,6 @@ public class MainUI extends javax.swing.JFrame {
 
         jMenu1.setText("File");
 
-        jMenuItem5.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem5.setText("Download Barcodes");
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem5ActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jMenuItem5);
-
         jMenuItem6.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem6.setText("Print Chalan");
         jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
@@ -1621,37 +1609,6 @@ public class MainUI extends javax.swing.JFrame {
             }
         });
         jMenu2.add(jMenuItem2);
-        jMenu2.add(jSeparator2);
-
-        jMenu4.setText("Location ..");
-        jMenu4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenu4ActionPerformed(evt);
-            }
-        });
-
-        radioRuby.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
-        buttonGroup1.add(radioRuby);
-        radioRuby.setSelected(true);
-        radioRuby.setText("Ruby");
-        radioRuby.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                radioRubyActionPerformed(evt);
-            }
-        });
-        jMenu4.add(radioRuby);
-
-        radioBehala.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.ALT_MASK));
-        buttonGroup1.add(radioBehala);
-        radioBehala.setText("Behala");
-        radioBehala.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                radioBehalaActionPerformed(evt);
-            }
-        });
-        jMenu4.add(radioBehala);
-
-        jMenu2.add(jMenu4);
 
         jMenuBar1.add(jMenu2);
 
@@ -1730,9 +1687,15 @@ public class MainUI extends javax.swing.JFrame {
     private void productIDKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_productIDKeyReleased
         // TODO add your handling code here:
         if(productID.getText().trim().length() == 0)
+        {
             searchBtn.setEnabled(false);
+            deleteStockBtn.setEnabled(false);
+        }
         else
+        {
             searchBtn.setEnabled(true);
+            deleteStockBtn.setEnabled(true);
+        }
     }//GEN-LAST:event_productIDKeyReleased
 
     private void productIDSSummaryInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_productIDSSummaryInputMethodTextChanged
@@ -2397,17 +2360,21 @@ public class MainUI extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null,"Enter valid phone","Alert",JOptionPane.WARNING_MESSAGE);
         else
         {
-            HashMap<String,String> hm = new HashMap<>();
-            hm.put("id", id);
-            hm.put("name", name);
-            hm.put("company", comapny);
-            hm.put("contact", phoneNo);
-            hm.put("address", address);
-            hm.put("favourite", favoirite);
-            String serverReply = new SaveClient(hm, new ServerConstants(radioRuby.isSelected()).UPDATE_CLIENT).serverResponse();
-
-            CustomJsonParser parser = new CustomJsonParser(serverReply);
-            if(parser.getStatus())
+            String query = "UPDATE CLIENT SET NAME='"+name+"',COMPANY='"+comapny+"',PHONE='"+phoneNo+"',ADDRESS='"+address+"',FAVOURITE='"+favoirite+"' WHERE ID="+id;
+            
+            int res = UpdateStock.update(query);
+            
+//            HashMap<String,String> hm = new HashMap<>();
+//            hm.put("id", id);
+//            hm.put("name", name);
+//            hm.put("company", comapny);
+//            hm.put("contact", phoneNo);
+//            hm.put("address", address);
+//            hm.put("favourite", favoirite);
+//            String serverReply = new SaveClient(hm, new ServerConstants(radioRuby.isSelected()).UPDATE_CLIENT).serverResponse();
+//
+//            CustomJsonParser parser = new CustomJsonParser(serverReply);
+            if(res!=-999)
             {
                 fetchClients("","");
                 ClientUpdate.setEnabled(false);
@@ -2415,7 +2382,7 @@ public class MainUI extends javax.swing.JFrame {
             }
             else
             {
-                JOptionPane.showMessageDialog(null, "Server responded with error\n\n"+parser.getReason(),"Error",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Failed to update client");
             }
 
         }
@@ -2446,17 +2413,21 @@ public class MainUI extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null,"Enter valid phone","Alert",JOptionPane.WARNING_MESSAGE);
         else
         {
-            HashMap<String,String> hm = new HashMap<>();
-            hm.put("id", id);
-            hm.put("name", name);
-            hm.put("company", comapny);
-            hm.put("contact", phoneNo);
-            hm.put("address", address);
-            hm.put("favourite", favoirite);
-            String serverReply = new SaveClient(hm, new ServerConstants(radioRuby.isSelected()).DELETE_CLIENT).serverResponse();
-
-            CustomJsonParser parser = new CustomJsonParser(serverReply);
-            if(parser.getStatus())
+            String query = "DELETE FROM CLIENT WHERE ID="+id;
+            
+            int res = UpdateStock.update(query);
+//
+//            HashMap<String,String> hm = new HashMap<>();
+//            hm.put("id", id);
+//            hm.put("name", name);
+//            hm.put("company", comapny);
+//            hm.put("contact", phoneNo);
+//            hm.put("address", address);
+//            hm.put("favourite", favoirite);
+//            String serverReply = new SaveClient(hm, new ServerConstants(radioRuby.isSelected()).DELETE_CLIENT).serverResponse();
+//
+//            CustomJsonParser parser = new CustomJsonParser(serverReply);
+            if(res!=-999)
             {
                 fetchClients("","");
                 ClientUpdate.setEnabled(false);
@@ -2464,7 +2435,7 @@ public class MainUI extends javax.swing.JFrame {
             }
             else
             {
-                JOptionPane.showMessageDialog(null, "Server responded with error\n\n"+parser.getReason(),"Error",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Failed to delete client");
             }
 
         }
@@ -2487,23 +2458,26 @@ public class MainUI extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null,"Enter valid phone","Alert",JOptionPane.WARNING_MESSAGE);
         else
         {
-            HashMap<String,String> hm = new HashMap<>();
-            hm.put("name", name);
-            hm.put("company", comapny);
-            hm.put("contact", phoneNo);
-            hm.put("address", address);
-            hm.put("favourite", favoirite);
-            String serverReply = new SaveClient(hm, new ServerConstants(radioRuby.isSelected()).SAVE_CLIENT).serverResponse();
-
-            CustomJsonParser parser = new CustomJsonParser(serverReply);
-            if(parser.getStatus())
+            
+            String query = "INSERT INTO CLIENT(NAME, COMPANY, PHONE, ADDRESS, FAVOURITE) VALUES ('"+name+"','"+comapny+"','"+phoneNo+"','"+address+"','"+favoirite+"')";
+            int res = UpdateStock.update(query);
+//            
+//            HashMap<String,String> hm = new HashMap<>();
+//            hm.put("name", name);
+//            hm.put("company", comapny);
+//            hm.put("contact", phoneNo);
+//            hm.put("address", address);
+//            hm.put("favourite", favoirite);
+//            String serverReply = new SaveClient(hm, new ServerConstants(radioRuby.isSelected()).SAVE_CLIENT).serverResponse();
+//
+//            CustomJsonParser parser = new CustomJsonParser(serverReply);
+            if(res!=-999)
             {
-                System.err.println(parser.getStatus()+" ");
                 fetchClients("","");
             }
             else
             {
-                JOptionPane.showMessageDialog(null, "Server responded with error\n\n"+parser.getReason(),"Error",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Failed to add client");
             }
 
         }
@@ -2601,12 +2575,12 @@ public class MainUI extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) ClientTable.getModel();
         int selectedRowIndex = ClientTable.getSelectedRow();
         
-        ClientName.setText((String) model.getValueAt(selectedRowIndex, 0));
-        ClientComapny.setText((String) model.getValueAt(selectedRowIndex, 1));
-        ClientPhone.setText((String) model.getValueAt(selectedRowIndex, 2));
-        ClientAddress.setText((String) model.getValueAt(selectedRowIndex, 3));
-        ClientFavouriteCheckbox.setSelected(String.valueOf(model.getValueAt(selectedRowIndex, 4)).equalsIgnoreCase("Yes"));
-        ClientID.setText((String) model.getValueAt(selectedRowIndex, 5));
+        ClientName.setText((String) model.getValueAt(selectedRowIndex, 1));
+        ClientComapny.setText((String) model.getValueAt(selectedRowIndex, 2));
+        ClientPhone.setText((String) model.getValueAt(selectedRowIndex, 3));
+        ClientAddress.setText((String) model.getValueAt(selectedRowIndex, 4));
+        ClientFavouriteCheckbox.setSelected(String.valueOf(model.getValueAt(selectedRowIndex, 5)).equalsIgnoreCase("Yes"));
+        ClientID.setText(String.valueOf(model.getValueAt(selectedRowIndex, 0)));
     }//GEN-LAST:event_ClientTableMouseClicked
 
     private void FavouriteClientTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FavouriteClientTableMouseClicked
@@ -2653,8 +2627,8 @@ public class MainUI extends javax.swing.JFrame {
     }//GEN-LAST:event_FavClientComapnyKeyReleased
 
     private void FavSearchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FavSearchBtnActionPerformed
-        String name = FavClientName.getText().trim().equals("") ? " " : FavClientName.getText();
-        String company = FavClientComapny.getText().trim().equals("") ? " " : FavClientComapny.getText();
+        String name = FavClientName.getText().trim();
+        String company = FavClientComapny.getText().trim();
         fetchFavouriteClients(name,company);
         FavClientComapny.setText("");
         FavClientName.setText("");
@@ -2681,25 +2655,40 @@ public class MainUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"Enter valid quantity","Alert",JOptionPane.WARNING_MESSAGE);
         else
             {
-                HashMap<String,String> map = new HashMap<>();
-                map.put("pid",printProductId.getText());
-                ProductModel model = new SearchProduct(map, new ServerConstants(radioRuby.isSelected()).GET_PRODUCT).specificResult(printProductId.getText());
-                if(model == null)
+            try {
+                String query = "SELECT PID,DESIGN,TEXTURE FROM STOCK WHERE PID='"+printProductId.getText()+"'";
+                
+                ResultSet rs = StockResultSet.fetchStock(query);
+//                HashMap<String,String> map = new HashMap<>();
+//                map.put("pid",printProductId.getText());
+//                ProductModel model = new SearchProduct(map, new ServerConstants(radioRuby.isSelected()).GET_PRODUCT).specificResult(printProductId.getText());
+                if(!rs.next())
                 {
                     JOptionPane.showMessageDialog(null,"No prodct with ID "+printProductId.getText()+" was found in stock.\nPlease verify the product ID.","Alert",JOptionPane.WARNING_MESSAGE);
                 }
                 else
                 {
-                    HashMap<String,String> map1 = new HashMap<>();
-                    map1.put("id", printProductId.getText());
-                    map1.put("qty",printQty.getText());
-                    String reply = new SendBulkRequest(map1, new ServerConstants(radioRuby.isSelected()).DECREMENT_STOCK).serverResponse();
-                    System.err.println(reply);
-                    CustomJsonParser parser = new CustomJsonParser(reply);
-                    if(parser.getStatus())
+                    String pid = rs.getString("PID");
+                    String design = rs.getString("DESIGN");
+                    String texturee = rs.getString("TEXTURE");
+                    rs.close();
+                    
+                    System.err.println(pid+"  "+design+"  "+texturee);
+                    query = "UPDATE STOCK SET QUANTITY= QUANTITY- "+printQty.getText()+" WHERE PID= '"+printProductId.getText()+"'";
+                    int res = UpdateStock.update(query);
+                    
+//                    HashMap<String,String> map1 = new HashMap<>();
+//                    map1.put("id", printProductId.getText());
+//                    map1.put("qty",printQty.getText());
+//                    String reply = new SendBulkRequest(map1, new ServerConstants(radioRuby.isSelected()).DECREMENT_STOCK).serverResponse();
+//                    System.err.println(reply);
+//                    CustomJsonParser parser = new CustomJsonParser(reply);
+                    
+                    
+                    if(res!=-999)
                     {
-                        DefaultTableModel dtm = (DefaultTableModel) printTable.getModel(); 
-                        Object[] row = {String.valueOf(dtm.getRowCount()+1), model.getDesign()+" ("+model.getTexture()+")", printQty.getText(),model.getPid()};
+                        DefaultTableModel dtm = (DefaultTableModel) printTable.getModel();
+                        Object[] row = {String.valueOf(dtm.getRowCount()+1), design+" ("+texturee+")", printQty.getText(),pid};
                         dtm.addRow(row);
 
                         printProductId.setText("");
@@ -2710,6 +2699,9 @@ public class MainUI extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(null,"Failed to update stock at server","Error",JOptionPane.ERROR_MESSAGE);
                     }
                 }
+            } catch (SQLException ex) {
+                Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
             }
         
             
@@ -2750,11 +2742,6 @@ public class MainUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_printPrintBtnActionPerformed
 
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-      
-        DownloadBarcode.getObj().setVisible(true);
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
-
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         // TODO add your handling code here:
         JOptionPane.showMessageDialog(null, "Inventory Management - Release v1.0.1\n" +
@@ -2777,15 +2764,6 @@ public class MainUI extends javax.swing.JFrame {
             printQty.setText("");
             
     }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void radioRubyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioRubyActionPerformed
-        // TODO add your handling code here:
-        setTitle(getTitle().replace("Behala", "Ruby"));
-    }//GEN-LAST:event_radioRubyActionPerformed
-
-    private void radioBehalaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioBehalaActionPerformed
-        setTitle(getTitle().replace("Ruby", "Behala"));
-    }//GEN-LAST:event_radioBehalaActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         try {
@@ -2839,10 +2817,6 @@ public class MainUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_ConfirmUpdateCBActionPerformed
 
-    private void jMenu4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu4ActionPerformed
-    
-    }//GEN-LAST:event_jMenu4ActionPerformed
-
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         // TODO add your handling code here:
         int input = JOptionPane.showConfirmDialog(null, "All the stock quantity are going to be reset to default. Are you sure?", "Alert", JOptionPane.WARNING_MESSAGE);
@@ -2857,6 +2831,24 @@ public class MainUI extends javax.swing.JFrame {
     private void productIDSSummaryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productIDSSummaryActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_productIDSSummaryActionPerformed
+
+    private void deleteStockBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteStockBtnActionPerformed
+        // TODO add your handling code here:
+        
+        String query = "DELETE FROM STOCK WHERE PID = '"+productID.getText()+"'";
+        int res = UpdateStock.update(query);
+        System.err.println(res);
+        if(res==1)
+        {
+            
+            JOptionPane.showMessageDialog(null, "Data deleted successfully");
+        }
+        else
+        {
+            
+            JOptionPane.showMessageDialog(null, "No data was found");
+        }
+    }//GEN-LAST:event_deleteStockBtnActionPerformed
 
     class UpdateFromStockPane extends SwingWorker<Integer, String>
     {
@@ -2985,6 +2977,7 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton clientSearchBtn;
     private javax.swing.JButton clientViewAll;
+    private javax.swing.JButton deleteStockBtn;
     private javax.swing.JTextField designName;
     private javax.swing.JTextField designNameAddBulk;
     private javax.swing.JTextField designNameAddSingle;
@@ -3027,7 +3020,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenu jMenu5;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
@@ -3036,7 +3028,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
@@ -3049,7 +3040,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JProgressBar mainUiProgress;
     private javax.swing.JLabel mainUiProgressReport;
     private javax.swing.JComboBox<String> paymentType;
@@ -3073,8 +3063,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JTextField rackNo;
     private javax.swing.JTextField rackNoAddBulk;
     private javax.swing.JTextField rackNoAddSingle;
-    private javax.swing.JRadioButtonMenuItem radioBehala;
-    private javax.swing.JRadioButtonMenuItem radioRuby;
     private javax.swing.JButton saveAddSingle;
     private javax.swing.JButton saveAllBtnAddBulk;
     private javax.swing.JButton searchBtn;
@@ -3085,7 +3073,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JTextField texture;
     private javax.swing.JTextField textureAddBulk;
     private javax.swing.JTextField textureAddSingle;
-    private javax.swing.JButton updateCancleBtn;
     private javax.swing.JButton updateStockSummary;
     private javax.swing.JButton viewAllBtnSSummary;
     // End of variables declaration//GEN-END:variables
@@ -3149,7 +3136,7 @@ public class MainUI extends javax.swing.JFrame {
 
     private void fetchClients(String name, String company) {
         DefaultTableModel tableModel = (DefaultTableModel) ClientTable.getModel();
-        ArrayList<ClientModel> list = new ArrayList<>();
+        //ArrayList<ClientModel> list = new ArrayList<>();
         int i = 0;
         while(tableModel.getRowCount() > 0)
         {
@@ -3158,39 +3145,70 @@ public class MainUI extends javax.swing.JFrame {
                 tableModel.removeRow(i);
             }
         }
+        String query;
+        if(name.length()==0 && company.length()==0)
+            query = "SELECT * FROM CLIENT";
+        else
+            if(name.length()!=0 && company.length()==0)
+                query = "SELECT * FROM CLIENT WHERE NAME LIKE '%"+name+"%'";
+            else
+                if(name.length()==0 && company.length()!=0)
+                    query = "SELECT * FROM CLIENT WHERE COMPANY LIKE '%"+company+"%'";	
+                else
+                    query = "SELECT * FROM CLIENT WHERE NAME LIKE '%"+name+"%' OR COMPANY LIKE '%"+company+"%'";	
         
-        HashMap<String,String> map = new HashMap<>();
-        map.put("name", name);
-        map.put("company", company);
+        //String query = "SELECT NAME,COMPANY,PHONE,ADDRESS,FAVOURITE,ID FROM CLIENT WHERE NAME LIKE '%"+name+"%' OR COMPANY LIKE '%"+company+"%'";	
         
-        list = new ClientAccess(map, new ServerConstants(radioRuby.isSelected()).FETCH_CLIENT).allResult();
-        if(list.size() > 0)
-        {
-            i = 0;
-            while(i < list.size())
-            {
-                tableModel.insertRow(i, new Object[]{
-                                    list.get(i).getName(),
-                                    list.get(i).getCompany(),
-                                    list.get(i).getContact(),
-                                    list.get(i).getAddress(),
-                                    list.get(i).getFavourite(),
-                                    list.get(i).getId()
-                                    });
-                i++;
-            }
+        ResultSet rs  = StockResultSet.fetchStock(query);
+        
+        try {
             
+            if(rs.next())
+            {
+                ClientTable.setModel(DbUtils.resultSetToTableModel(rs));
+                System.err.println(query);
+                rs.close();
+            }
+            else
+                JOptionPane.showMessageDialog(null, "No saved client was found", "Information", JOptionPane.INFORMATION_MESSAGE);
+        
+        } catch (SQLException ex) {
+            System.err.println(ex);
+        }
+        
+        
+//        HashMap<String,String> map = new HashMap<>()
+//        map.put("name", name);
+//        map.put("company", company);
+//        
+//        list = new ClientAccess(map, new ServerConstants(radioRuby.isSelected()).FETCH_CLIENT).allResult();
+//        if(list.size() > 0)
+//        {
+//            i = 0;
+//            while(i < list.size())
+//            {
+//                tableModel.insertRow(i, new Object[]{
+//                                    list.get(i).getName(),
+//                                    list.get(i).getCompany(),
+//                                    list.get(i).getContact(),
+//                                    list.get(i).getAddress(),
+//                                    list.get(i).getFavourite(),
+//                                    list.get(i).getId()
+//                                    });
+//                i++;
+//            }
+//            
             ClientName.setText("");
             ClientAddress.setText("");
             ClientPhone.setText("");
             ClientComapny.setText("");
             ClientID.setText("");
             ClientFavouriteCheckbox.setSelected(false);
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(null, "No saved client was found", "Information", JOptionPane.INFORMATION_MESSAGE);
-        }
+//        }
+//        else
+//        {
+//            JOptionPane.showMessageDialog(null, "No saved client was found", "Information", JOptionPane.INFORMATION_MESSAGE);
+//        }
         
     }
     
@@ -3207,37 +3225,69 @@ public class MainUI extends javax.swing.JFrame {
             }
         }
         
-        HashMap<String,String> map = new HashMap<>();
-        map.put("name", name);
-        map.put("company", company);
         
-        list = new ClientAccess(map, new ServerConstants(radioRuby.isSelected()).FETCH_CLIENT).allResult();
-        if(list.size() > 0)
-        {
-            i = 0;
-            while(i < list.size())
-            {
-                if(!list.get(i).getFavourite().equalsIgnoreCase("Yes"))
-                {
-                    i++;
-                    continue;
-                }
-                tableModel.insertRow(i, new Object[]{
-                                    list.get(i).getName(),
-                                    list.get(i).getCompany(),
-                                    list.get(i).getContact(),
-                                    list.get(i).getAddress(),
-                                    list.get(i).getFavourite(),
-                                    list.get(i).getId()
-                                    });
-                i++;
-            }
+        String query;
+        if(name.length()==0 && company.length()==0)
+            query = "SELECT * FROM CLIENT";
+        else
+            if(name.length()!=0 && company.length()==0)
+                query = "SELECT * FROM CLIENT WHERE NAME LIKE '%"+name+"%'";
+            else
+                if(name.length()==0 && company.length()!=0)
+                    query = "SELECT * FROM CLIENT WHERE COMPANY LIKE '%"+company+"%'";	
+                else
+                    query = "SELECT * FROM CLIENT WHERE NAME LIKE '%"+name+"%' OR COMPANY LIKE '%"+company+"%'";	
+        
+        //String query = "SELECT NAME,COMPANY,PHONE,ADDRESS,FAVOURITE,ID FROM CLIENT WHERE NAME LIKE '%"+name+"%' OR COMPANY LIKE '%"+company+"%'";	
+        
+        ResultSet rs  = StockResultSet.fetchStock(query);
+        
+        try {
             
+            if(rs.next())
+            {
+                FavouriteClientTable.setModel(DbUtils.resultSetToTableModel(rs));
+                
+                rs.close();
+            }
+            else
+                JOptionPane.showMessageDialog(null, "No saved client was found", "Information", JOptionPane.INFORMATION_MESSAGE);
+        
+        } catch (SQLException ex) {
+            System.err.println(ex);
         }
-        if(tableModel.getRowCount() == 0)
-        {
-            JOptionPane.showMessageDialog(null, "No saved client was found", "Information", JOptionPane.INFORMATION_MESSAGE);
-        }
+//        
+//        HashMap<String,String> map = new HashMap<>();
+//        map.put("name", name);
+//        map.put("company", company);
+//        
+//        list = new ClientAccess(map, new ServerConstants(radioRuby.isSelected()).FETCH_CLIENT).allResult();
+//        if(list.size() > 0)
+//        {
+//            i = 0;
+//            while(i < list.size())
+//            {
+//                if(!list.get(i).getFavourite().equalsIgnoreCase("Yes"))
+//                {
+//                    i++;
+//                    continue;
+//                }
+//                tableModel.insertRow(i, new Object[]{
+//                                    list.get(i).getName(),
+//                                    list.get(i).getCompany(),
+//                                    list.get(i).getContact(),
+//                                    list.get(i).getAddress(),
+//                                    list.get(i).getFavourite(),
+//                                    list.get(i).getId()
+//                                    });
+//                i++;
+//            }
+//            
+//        }
+//        if(tableModel.getRowCount() == 0)
+//        {
+//            JOptionPane.showMessageDialog(null, "No saved client was found", "Information", JOptionPane.INFORMATION_MESSAGE);
+//        }
         
     }
 
